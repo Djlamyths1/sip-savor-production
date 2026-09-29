@@ -1,0 +1,40 @@
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+
+# Local development / generated artifacts
+.bolt/
+test-supabase.ts
+test_replace.txt
+*.timestamp-*.mjs
+
+# Local backup files
+*.backup
+*.before-*
+*.stageA-backup
+
+# Supabase CLI local state
+supabase/.temp/
+
+# Additional stage backups
+*.stage*-backup

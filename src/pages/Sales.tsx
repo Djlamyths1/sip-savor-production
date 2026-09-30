@@ -293,7 +293,7 @@ export default function Sales() {
     <div>
       <PageHeader
         title="Sales"
-        subtitle="Record sales transactions — stock is automatically deducted and revenue tracked"
+        subtitle="Record sales transactions ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â stock is automatically deducted and revenue tracked"
 action={
   <div className="flex gap-2">
     {canViewSalesHistory && canExportSales && (
@@ -442,7 +442,7 @@ action={
                       </td>
 
                       <td className="px-5 py-3 text-sm text-stone-500">
-                        {s.customer_name || s.customers?.name || '�'}
+                        {s.customer_name || s.customers?.name || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}
                         {s.customers?.state && (
                           <span className="text-stone-400 text-xs ml-1">
                             ({s.customers.state})
@@ -727,7 +727,7 @@ function ReceiptModal({
 
         <div class="row">
           <span class="label">Payment:</span>
-          <span class="value">${sale.payment_method || '�'}</span>
+          <span class="value">${sale.payment_method || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}</span>
         </div>
 
         <div class="row">
@@ -820,7 +820,7 @@ function ReceiptModal({
 
                     <div className="flex justify-between text-sm mt-1">
                       <span className="text-stone-500">
-                        {formatNumber(Number(item.quantity || 0))} � {formatCurrency(Number(item.unit_price || 0))}
+                        {formatNumber(Number(item.quantity || 0))} ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ {formatCurrency(Number(item.unit_price || 0))}
                       </span>
                       <span className="font-medium text-stone-900">
                         {formatCurrency(Number(item.line_total || 0))}
@@ -880,7 +880,7 @@ function ReceiptModal({
             <div className="flex justify-between text-sm">
               <span className="text-stone-500">Payment:</span>
               <span className="font-medium text-stone-900">
-                {sale.payment_method || '�'}
+                {sale.payment_method || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}
               </span>
             </div>
 
@@ -1211,13 +1211,13 @@ function RecordSaleModal({
                         )}
                       </td>
                       <td className="px-3 py-2 w-28">
-                        <Input label="Quantity" type="number" min="0" step="0.01" value={item.quantity}
+                        <Input label="Quantity" type="number" min="0" step="1" value={item.quantity}
                           onChange={(value) => updateItem(item.id, { quantity: value })}
                           placeholder="0"
                         />
                       </td>
                       <td className="px-3 py-2 w-36">
-                        <Input label="Unit Price" type="number" min="0" step="0.01" value={item.unitPrice}
+                        <Input label="Unit Price" type="number" min="0" step="1" value={item.unitPrice}
                           onChange={(value) => updateItem(item.id, { unitPrice: value })}
                         />
                       </td>
@@ -1250,7 +1250,7 @@ function RecordSaleModal({
             label="Invoice Discount"
             type="number"
             min="0"
-            step="0.01"
+            step="1"
             value={invoiceDiscount}
             onChange={(value) => setInvoiceDiscount(value)}
           />
@@ -1273,7 +1273,7 @@ function RecordSaleModal({
             label="Initial Payment"
             type="number"
             min="0"
-            step="0.01"
+            step="1"
             value={initialPayment}
             onChange={(value) => setInitialPayment(value)}
             placeholder={paymentStatus === 'Paid' ? String(grandTotal) : '0'}
@@ -1315,7 +1315,7 @@ function RecordSaleModal({
                 label="Customer Delivery Charge"
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={customerCharge}
                 onChange={(value) => setCustomerCharge(value)}
               />
@@ -1588,15 +1588,18 @@ function EditSaleModal({
 
         const next = { ...item, ...patch };
 
-        if (patch.productId !== undefined) {
-          const product = products.find(
-            (p) => p.id === patch.productId
-          );
+          if (
+            patch.productId !== undefined &&
+            patch.productId !== item.productId
+          ) {
+            const product = products.find(
+              (p) => p.id === patch.productId
+            );
 
-          next.unitPrice = product
-            ? String(product.selling_price ?? 0)
-            : '';
-        }
+            next.unitPrice = product
+              ? String(product.selling_price ?? 0)
+              : '';
+          }
 
         return next;
       })
@@ -1782,10 +1785,28 @@ function EditSaleModal({
       }
 
       onSaved();
-    } catch (err) {
+    } catch (err: unknown) {
+      console.error('Failed to update invoice:', err);
+
+      const rpcError = err as {
+        message?: string;
+        details?: string;
+        hint?: string;
+        code?: string;
+      };
+
+      const errorParts = [
+        rpcError.message,
+        rpcError.details,
+        rpcError.hint,
+      ].filter(
+        (value): value is string =>
+          typeof value === 'string' && value.trim().length > 0
+      );
+
       setError(
-        err instanceof Error
-          ? err.message
+        errorParts.length > 0
+          ? errorParts.join(' ')
           : 'Failed to update invoice.'
       );
     } finally {
@@ -1948,7 +1969,7 @@ function EditSaleModal({
                           label="Quantity"
                           type="number"
                           min="0"
-                          step="0.01"
+                          step="1"
                           value={item.quantity}
                           onChange={(value) =>
                             updateItem(
@@ -1966,7 +1987,7 @@ function EditSaleModal({
                           label="Unit Price"
                           type="number"
                           min="0"
-                          step="0.01"
+                          step="1"
                           value={item.unitPrice}
                           onChange={(value) =>
                             updateItem(
@@ -2034,7 +2055,7 @@ function EditSaleModal({
             label="Invoice Discount"
             type="number"
             min="0"
-            step="0.01"
+            step="1"
             value={invoiceDiscount}
             onChange={setInvoiceDiscount}
           />

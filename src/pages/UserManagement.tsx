@@ -641,6 +641,26 @@ export default function UserManagement() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingUser, setEditingUser] = useState<ManagedUser | null>(null);
+  const [editRole, setEditRole] = useState<Role>('hr');
+  const [editPermissions, setEditPermissions] =
+    useState<Record<string, PermissionLevel>>(emptyPermissions());
+  const [editOpenModules, setEditOpenModules] =
+    useState<Record<string, boolean>>({
+      dashboard: true,
+      raw_materials: false,
+      stock_in: false,
+      products: false,
+      recipes: false,
+      production: false,
+      sales: false,
+      customers: false,
+      payments: false,
+      deliveries: false,
+      expenses: false,
+      reports: false,
+      database_export: false,
+      users: false,
+    });
   const [editActive, setEditActive] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
@@ -781,6 +801,22 @@ export default function UserManagement() {
       [module]: !current[module],
     }));
   };
+  const setEditPermissionLevel = (
+    permissionCode: string,
+    level: PermissionLevel
+  ) => {
+    setEditPermissions((current) => ({
+      ...current,
+      [permissionCode]: level,
+    }));
+  };
+
+  const toggleEditModule = (module: string) => {
+    setEditOpenModules((current) => ({
+      ...current,
+      [module]: !current[module],
+    }));
+  };
 
   const handleCreateUser = async () => {
     setCreateError(null);
@@ -866,10 +902,40 @@ export default function UserManagement() {
   };
 
   const openEditModal = (user: ManagedUser) => {
+    const knownRole = user.role &&
+      Object.prototype.hasOwnProperty.call(ROLE_LABELS, user.role)
+      ? user.role as Role
+      : 'hr';
+
+    const userPermissionValues = Object.fromEntries(
+      user.permissions.map((permission) => [
+        permission.permission_code,
+        permission.permission_level,
+      ])
+    ) as Record<string, PermissionLevel>;
+
     setEditingUser(user);
+    setEditRole(knownRole);
+    setEditPermissions(buildPermissions(userPermissionValues));
     setEditActive(user.is_active);
     setEditError(null);
     setEditSuccess(null);
+    setEditOpenModules({
+      dashboard: true,
+      raw_materials: false,
+      stock_in: false,
+      products: false,
+      recipes: false,
+      production: false,
+      sales: false,
+      customers: false,
+      payments: false,
+      deliveries: false,
+      expenses: false,
+      reports: false,
+      database_export: false,
+      users: false,
+    });
   };
 
   const closeEditModal = () => {
@@ -888,10 +954,35 @@ export default function UserManagement() {
     setEditSuccess(null);
 
     try {
+      const permissionRows = Object.entries(editPermissions)
+        .filter(([, level]) => level !== 'none')
+        .map(([permission_code, permission_level]) => ({
+          permission_code,
+          permission_level,
+        }));
+
+      const { data: updateData, error: updateFunctionError } =
+        await supabase.functions.invoke('manage-user', {
+          body: {
+            action: 'update',
+            user_id: editingUser.id,
+            role: editRole,
+            permissions: permissionRows,
+          },
+        });
+
+      if (updateFunctionError) {
+        throw new Error(updateFunctionError.message);
+      }
+
+      if (updateData?.error) {
+        throw new Error(updateData.error);
+      }
+
       if (editActive !== editingUser.is_active) {
         const action = editActive ? 'enable' : 'disable';
 
-        const { data, error: functionError } =
+        const { data: statusData, error: statusFunctionError } =
           await supabase.functions.invoke('manage-user', {
             body: {
               action,
@@ -899,12 +990,12 @@ export default function UserManagement() {
             },
           });
 
-        if (functionError) {
-          throw new Error(functionError.message);
+        if (statusFunctionError) {
+          throw new Error(statusFunctionError.message);
         }
 
-        if (data?.error) {
-          throw new Error(data.error);
+        if (statusData?.error) {
+          throw new Error(statusData.error);
         }
       }
 
@@ -1142,7 +1233,7 @@ export default function UserManagement() {
 
       {editingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+          <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-stone-200 px-6 py-4">
               <div>
                 <h2 className="text-xl font-bold text-stone-900">
@@ -1163,7 +1254,7 @@ export default function UserManagement() {
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="min-h-0 overflow-y-auto p-6">
               {editError && (
                 <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4">
                   <p className="font-semibold text-red-800">
@@ -1184,6 +1275,155 @@ export default function UserManagement() {
               )}
 
               <div className="rounded-xl border border-stone-200 p-4">
+                <p className="text-sm font-semibold text-stone-900">
+                  Role
+                </p>
+
+                <p className="mt-1 text-sm text-stone-500">
+                  Changing the role applies only the role value. Individual permissions can be adjusted below.
+                </p>
+
+                <select
+                  value={editRole}
+                  onChange={(event) => {
+                    const selectedRole = event.target.value as Role;
+                    setEditRole(selectedRole);
+                    setEditPermissions(templatePermissions(selectedRole));
+                  }}
+                  disabled={editing}
+                  className="mt-4 w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                >
+                  {(Object.keys(ROLE_LABELS) as Role[]).map((availableRole) => (
+                    <option key={availableRole} value={availableRole}>
+                      {ROLE_LABELS[availableRole]}
+                    </option>
+                  ))}
+                </select>
+
+                <p className="mt-2 text-xs text-stone-500">
+                  Selecting a role loads its standard permission template. You can customize it below.
+                </p>
+              </div>
+
+              <div className="mt-5 rounded-xl border border-stone-200">
+                <div className="border-b border-stone-200 px-5 py-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-semibold text-stone-900">
+                        Custom Permissions
+                      </h3>
+                      <p className="mt-1 text-sm text-stone-500">
+                        Adjust individual permissions for this staff account.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditPermissions(templatePermissions(editRole))}
+                      disabled={editing}
+                      className="shrink-0 rounded-lg border border-stone-300 px-3 py-2 text-xs font-medium text-stone-700 hover:bg-stone-50 disabled:opacity-50"
+                    >
+                      Reset to {ROLE_LABELS[editRole]}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="divide-y divide-stone-200">
+                  {PERMISSION_GROUPS.map((group) => {
+                    const enabledCount = group.permissions.filter(
+                      (permission) =>
+                        editPermissions[permission.code] !== 'none'
+                    ).length;
+
+                    return (
+                      <div key={group.module}>
+                        <button
+                          type="button"
+                          onClick={() => toggleEditModule(group.module)}
+                          disabled={editing}
+                          className="flex w-full items-center justify-between px-5 py-4 text-left hover:bg-stone-50 disabled:cursor-not-allowed"
+                        >
+                          <div>
+                            <p className="font-medium text-stone-900">
+                              {group.label}
+                            </p>
+                            <p className="mt-0.5 text-xs text-stone-500">
+                              {enabledCount} of {group.permissions.length} permissions enabled
+                            </p>
+                          </div>
+
+                          <ChevronDown
+                            size={18}
+                            className={`transition-transform ${
+                              editOpenModules[group.module]
+                                ? 'rotate-180'
+                                : ''
+                            }`}
+                          />
+                        </button>
+
+                        {editOpenModules[group.module] && (
+                          <div className="bg-stone-50 px-5 pb-5">
+                            <div className="overflow-x-auto rounded-lg border border-stone-200 bg-white">
+                              <table className="min-w-full">
+                                <thead>
+                                  <tr className="border-b border-stone-200 bg-stone-50">
+                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">
+                                      Permission
+                                    </th>
+                                    <th className="w-40 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-stone-500">
+                                      Level
+                                    </th>
+                                  </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-stone-100">
+                                  {group.permissions.map((permission) => (
+                                    <tr key={permission.code}>
+                                      <td className="px-4 py-3">
+                                        <p className="text-sm font-medium text-stone-800">
+                                          {permission.label}
+                                        </p>
+                                        <p className="mt-0.5 text-xs text-stone-500">
+                                          {permission.description}
+                                        </p>
+                                      </td>
+
+                                      <td className="px-4 py-3">
+                                        <select
+                                          value={
+                                            editPermissions[permission.code] ??
+                                            'none'
+                                          }
+                                          onChange={(event) =>
+                                            setEditPermissionLevel(
+                                              permission.code,
+                                              event.target.value as PermissionLevel
+                                            )
+                                          }
+                                          disabled={editing}
+                                          className="w-full rounded-lg border border-stone-300 bg-white px-2.5 py-2 text-sm outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+                                        >
+                                          <option value="none">None</option>
+                                          <option value="enter">Enter</option>
+                                          <option value="view">View</option>
+                                          <option value="manage">Manage</option>
+                                        </select>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-xl border border-stone-200 p-4">
                 <p className="text-sm font-semibold text-stone-900">
                   Account Status
                 </p>
@@ -1607,6 +1847,13 @@ export default function UserManagement() {
     </div>
   );
 }
+
+
+
+
+
+
+
 
 
 

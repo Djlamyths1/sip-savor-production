@@ -75,7 +75,7 @@ export default function DatabaseExport() {
       link.remove();
       URL.revokeObjectURL(url);
 
-      setStatus('EXPORT COMPLETE — check your Downloads folder.');
+      setStatus('EXPORT COMPLETE â€” check your Downloads folder.');
     } catch (error) {
       console.error(error);
       setStatus(
@@ -91,7 +91,7 @@ export default function DatabaseExport() {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">
-        SIP & SAVOR Database Export
+        Sip 'n' Savor Database Export
       </h1>
 
       <p className="mb-6 text-stone-600">

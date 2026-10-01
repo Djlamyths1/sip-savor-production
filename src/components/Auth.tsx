@@ -76,7 +76,7 @@ export default function Auth() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 mb-4 shadow-xl shadow-amber-500/20">
             <Coffee className="w-9 h-9 text-stone-900" />
           </div>
-          <h1 className="text-2xl font-bold text-stone-100">Sip &amp; Savor</h1>
+          <h1 className="text-2xl font-bold text-stone-100">Sip 'n' Savor</h1>
           <p className="text-sm text-stone-400 mt-1">Inventory Management System</p>
         </div>
 

@@ -125,7 +125,7 @@ export function downloadExcel(filename: string, sheetName: string, headers: stri
 }
 
 export function printReport(title: string, dateRange: string, headers: string[], rows: (string | number)[][], summary?: { label: string; value: string }[]): void {
-  const businessName = 'Sip &amp; Savor';
+  const businessName = "Sip 'n' Savor";
   const businessAddress = 'Beverage Production &amp; Sales';
   const phone = '';
   const genDate = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
@@ -168,5 +168,4 @@ export function printReport(title: string, dateRange: string, headers: string[],
     setTimeout(() => w.print(), 250);
   }
 }
-
 

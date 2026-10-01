@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import {
   LayoutDashboard,
   Package,
@@ -100,7 +100,7 @@ export default function Layout({
         <header className="lg:hidden bg-stone-900 text-stone-100 px-4 py-3 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-2">
             <Coffee className="w-6 h-6 text-amber-500" />
-            <span className="font-semibold text-lg">Sip &amp; Savor</span>
+            <span className="font-semibold text-lg">Sip 'n' Savor</span>
           </div>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -165,7 +165,7 @@ function SidebarContent({
             <Coffee className="w-6 h-6 text-stone-900" />
           </div>
           <div>
-            <h1 className="font-bold text-lg leading-tight">Sip &amp; Savor</h1>
+            <h1 className="font-bold text-lg leading-tight">Sip 'n' Savor</h1>
             <p className="text-xs text-stone-400">Inventory System</p>
           </div>
         </div>
@@ -213,7 +213,4 @@ function SidebarContent({
     </>
   );
 }
-
-
-
 

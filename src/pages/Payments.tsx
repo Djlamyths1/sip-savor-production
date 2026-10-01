@@ -329,7 +329,7 @@ function PaymentReceiptModal({ payment, onClose }: { payment: PaymentWithCustome
     .total{font-size:16px;font-weight:bold;margin-top:8px}
     .center{text-align:center;font-size:11px;color:#78716c;margin-top:16px}
     </style></head><body>
-    <div class="header"><h1>Sip &amp; Savor</h1><p>Beverage Production &amp; Sales</p></div>
+    <div class="header"><h1>Sip 'n' Savor</h1><p>Beverage Production &amp; Sales</p></div>
     <div class="divider"></div>
     <div class="row"><span class="label">Payment #:</span><span class="value">${payment.payment_number}</span></div>
     <div class="row"><span class="label">Date:</span><span class="value">${formatDate(payment.payment_date)}</span></div>
@@ -355,7 +355,7 @@ function PaymentReceiptModal({ payment, onClose }: { payment: PaymentWithCustome
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 mb-2">
               <CreditCard className="w-6 h-6 text-stone-900" />
             </div>
-            <h3 className="font-bold text-stone-900">Sip &amp; Savor</h3>
+            <h3 className="font-bold text-stone-900">Sip 'n' Savor</h3>
             <p className="text-xs text-stone-400">Payment Receipt</p>
           </div>
           <div className="border-t border-dashed border-stone-300 pt-3 space-y-1.5">
@@ -423,6 +423,4 @@ function VoidPaymentModal({ payment, onClose, onVoided }: { payment: PaymentWith
     </Modal>
   );
 }
-
-
 

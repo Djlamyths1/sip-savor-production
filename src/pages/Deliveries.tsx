@@ -438,7 +438,7 @@ function printDeliveryNote(d: DeliveryWithRelations, canViewDeliveryCost: boolea
   td{padding:8px;border-bottom:1px solid #f5f5f4;font-size:12px}
   @media print{body{padding:15px}}
   </style></head><body>
-  <div class="header"><h1>Sip &amp; Savor</h1><p>Beverage Production &amp; Sales</p></div>
+  <div class="header"><h1>Sip 'n' Savor</h1><p>Beverage Production &amp; Sales</p></div>
   <div class="section">
     <h3>Delivery Note</h3>
     <div class="row"><span class="label">Delivery #:</span><span class="value">${d.delivery_number}</span></div>
@@ -474,12 +474,4 @@ function printDeliveryNote(d: DeliveryWithRelations, canViewDeliveryCost: boolea
   const w = window.open('', '_blank');
   if (w) { w.document.write(html); w.document.close(); w.focus(); setTimeout(() => w.print(), 250); }
 }
-
-
-
-
-
-
-
-
 

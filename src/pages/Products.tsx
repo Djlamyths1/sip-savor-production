@@ -273,12 +273,20 @@ function StockOutModal({
     setSaving(true);
     setError('');
     try {
-      const qtyNum = parseFloat(qty);
+      const qtyNum = Number(qty);
+
+      if (!Number.isInteger(qtyNum)) {
+        setError('Quantity must be a whole number.');
+        setSaving(false);
+        return;
+      }
+
       if (!qtyNum || qtyNum <= 0) {
         setError('Quantity must be greater than 0');
         setSaving(false);
         return;
       }
+
       if (qtyNum > product.current_stock) {
         setError(`Only ${product.current_stock} in stock`);
         setSaving(false);
@@ -292,8 +300,31 @@ function StockOutModal({
       });
       if (e) throw e;
       onSaved();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to log stock-out');
+    } catch (err: unknown) {
+      console.error('Failed to log stock-out:', err);
+
+      const rpcError = err as {
+        message?: string;
+        details?: string;
+        hint?: string;
+        code?: string;
+      };
+
+      const errorParts = [
+        rpcError.message,
+        rpcError.details,
+        rpcError.hint,
+      ].filter(
+        (value): value is string =>
+          typeof value === 'string' && value.trim().length > 0
+      );
+
+      setError(
+        errorParts.length > 0
+          ? errorParts.join(' ')
+          : 'Failed to log stock-out'
+      );
+
       setSaving(false);
     }
   };
@@ -307,7 +338,7 @@ function StockOutModal({
             Current stock: {formatNumber(product.current_stock)} units
           </span>
         </div>
-        <Input label="Quantity" type="number" value={qty} onChange={setQty} step="0.01" min="0" placeholder="0" required />
+        <Input label="Quantity" type="number" value={qty} onChange={setQty} step="1" min="0" placeholder="0" required />
         <Select
           label="Type"
           value={type}

@@ -293,7 +293,7 @@ export default function Sales() {
     <div>
       <PageHeader
         title="Sales"
-        subtitle="Record sales transactions ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â stock is automatically deducted and revenue tracked"
+        subtitle="Record sales transactions — stock is automatically deducted and revenue tracked"
 action={
   <div className="flex gap-2">
     {canViewSalesHistory && canExportSales && (
@@ -442,7 +442,7 @@ action={
                       </td>
 
                       <td className="px-5 py-3 text-sm text-stone-500">
-                        {s.customer_name || s.customers?.name || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}
+                        {s.customer_name || s.customers?.name || '—'}
                         {s.customers?.state && (
                           <span className="text-stone-400 text-xs ml-1">
                             ({s.customers.state})
@@ -665,7 +665,7 @@ function ReceiptModal({
       </head>
       <body>
         <div class="header">
-          <h1>Sip &amp; Savor</h1>
+          <h1>Sip 'n' Savor</h1>
           <p>Inventory Management System</p>
         </div>
 
@@ -727,7 +727,7 @@ function ReceiptModal({
 
         <div class="row">
           <span class="label">Payment:</span>
-          <span class="value">${sale.payment_method || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}</span>
+          <span class="value"></span>
         </div>
 
         <div class="row">
@@ -771,7 +771,7 @@ function ReceiptModal({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 mb-2">
               <Receipt className="w-6 h-6 text-stone-900" />
             </div>
-            <h3 className="font-bold text-stone-900">Sip &amp; Savor</h3>
+            <h3 className="font-bold text-stone-900">Sip 'n' Savor</h3>
             <p className="text-xs text-stone-400">Inventory Management System</p>
           </div>
 
@@ -820,7 +820,7 @@ function ReceiptModal({
 
                     <div className="flex justify-between text-sm mt-1">
                       <span className="text-stone-500">
-                        {formatNumber(Number(item.quantity || 0))} ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ {formatCurrency(Number(item.unit_price || 0))}
+                        {formatNumber(Number(item.quantity || 0))} × {formatCurrency(Number(item.unit_price || 0))}
                       </span>
                       <span className="font-medium text-stone-900">
                         {formatCurrency(Number(item.line_total || 0))}
@@ -880,7 +880,7 @@ function ReceiptModal({
             <div className="flex justify-between text-sm">
               <span className="text-stone-500">Payment:</span>
               <span className="font-medium text-stone-900">
-                {sale.payment_method || 'ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½'}
+                {sale.payment_method || '—'}
               </span>
             </div>
 
@@ -2181,49 +2181,4 @@ function EditSaleModal({
     </Modal>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

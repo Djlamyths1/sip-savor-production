@@ -495,7 +495,7 @@ function CustomerStatement({ customer, sales, payments }: { customer: Customer; 
     .closing{margin-top:20px;font-size:16px;font-weight:bold}
     @media print{body{padding:15px}}
     </style></head><body>
-    <div class="header"><h1>Sip &amp; Savor</h1><p>Beverage Production &amp; Sales</p></div>
+    <div class="header"><h1>Sip 'n' Savor</h1><p>Beverage Production &amp; Sales</p></div>
     <div class="customer"><h2>${customer.name}</h2>${customer.phone ? `<p>${customer.phone}</p>` : ''}${customer.state ? `<p>${customer.state}</p>` : ''}</div>
     <table><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th class="right">Debit</th><th class="right">Credit</th><th class="right">Balance</th></tr></thead>
     <tbody>${rows.map((r) => `<tr><td>${formatDate(r.date)}</td><td>${r.ref}</td><td>${r.desc}</td><td class="right">${r.debit ? formatCurrency(r.debit) : '—'}</td><td class="right">${r.credit ? formatCurrency(r.credit) : '—'}</td><td class="right">${formatCurrency(r.balance)}</td></tr>`).join('')}</tbody></table>
@@ -652,11 +652,4 @@ function PaymentStatusBadge({ status }: { status: string }) {
   if (status === 'Unpaid' || status === 'Credit') return <Badge color="red">Credit</Badge>;
   return <Badge color="stone">{status}</Badge>;
 }
-
-
-
-
-
-
-
 

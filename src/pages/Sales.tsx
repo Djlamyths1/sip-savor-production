@@ -938,12 +938,16 @@ function RecordSaleModal({
 
   const makeLine = (productId = products[0]?.id || ''): SaleLine => {
     const product = products.find((p) => p.id === productId);
-    return {
-      id: crypto.randomUUID(),
-      productId,
-      quantity: '',
-      unitPrice: product ? String(product.selling_price ?? 0) : '',
-    };
+  return {
+  id:
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `sale-line-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  productId,
+  quantity: '',
+  unitPrice: product ? String(product.selling_price ?? 0) : '',
+};
   };
 
   const [items, setItems] = useState<SaleLine[]>([makeLine()]);

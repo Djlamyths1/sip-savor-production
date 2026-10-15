@@ -121,7 +121,12 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       supabase.from('finished_goods_transactions').select('*').eq('type', 'production').gte('date', start).lte('date', end),
       supabase.rpc('get_total_receivables'),
       supabase.rpc('get_logistics_summary', { p_start: start, p_end: end }),
-      supabase.from('customer_payments').select('amount').eq('is_voided', false).gte('payment_date', start).lte('payment_date', end),
+      supabase
+  .from('customer_payments')
+  .select('amount, payment_method')
+  .eq('is_voided', false)
+  .gte('payment_date', start)
+  .lte('payment_date', end),
     ]);
 
     setReceivables((recvRes.data as TotalReceivables[])?.[0] || { total_receivables: 0, overdue_amount: 0, customers_owing: 0, partially_paid_invoices: 0, unpaid_invoices: 0 });
@@ -273,16 +278,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       payment_method?: string | null;
     }[];
 
-    // Fetch payment methods for the selected period.
-    console.log('BEFORE PAYMENT DETAILS');
-    const { data: paymentDetails } = await supabase
-      .from('customer_payments')
-      .select('amount, payment_method')
-      .eq('is_voided', false)
-      .gte('payment_date', start)
-      .lte('payment_date', end);
-
-    (paymentDetails || periodPayments).forEach((p) => {
+periodPayments.forEach((p) => {
       const method = p.payment_method || 'Unknown';
       payBreakdown[method] =
         (payBreakdown[method] || 0) + Number(p.amount || 0);

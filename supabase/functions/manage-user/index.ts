@@ -45,6 +45,8 @@ function getAllowedOrigin(req: Request): string {
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
     "http://127.0.0.1:5175",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
   ];
 
   const allowedOrigins = new Set([
@@ -632,11 +634,12 @@ Deno.serve(async (req) => {
           );
         }
 
-        createdUserId = created.user.id;
+        const newUserId = created.user.id;
+        createdUserId = newUserId;
 
         await ensureRoleRow(
           serviceClient,
-          createdUserId,
+          newUserId,
           body.role
         );
 
@@ -647,7 +650,7 @@ Deno.serve(async (req) => {
 
         await replaceUserPermissions(
           serviceClient,
-          createdUserId,
+          newUserId,
           permissions
         );
 

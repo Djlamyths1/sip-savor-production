@@ -42,6 +42,7 @@ export const UNITS = [
   'g',
   'liters',
   'ml',
+  'paint',
   'pieces',
   'packs',
   'bottles',
@@ -143,7 +144,7 @@ export const NAV_ITEMS = [
   { id: 'expenses', label: 'Expenses', icon: 'Receipt' },
   { id: 'reports', label: 'Reports', icon: 'BarChart3' },
   { id: 'user-management', label: 'User Management', icon: 'UserCog' },
-  { id: 'database-export', label: 'Database Export', icon: 'Download' },
+
 ] as const;
 
 export type NavId = (typeof NAV_ITEMS)[number]['id'];

@@ -1,3 +1,4 @@
+
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -9,13 +10,20 @@ interface ModalProps {
   maxWidth?: string;
 }
 
-export default function Modal({ open, onClose, title, children, maxWidth = 'max-w-lg' }: ModalProps) {
+export default function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  maxWidth = 'max-w-lg',
+}: ModalProps) {
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
+
     return () => {
       document.body.style.overflow = '';
     };
@@ -24,24 +32,39 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'max-
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+      <button
+        type="button"
+        aria-label="Close modal"
         className="absolute inset-0 bg-stone-900/60 backdrop-blur-sm"
         onClick={onClose}
       />
+
       <div
-        className={`relative bg-white rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] flex flex-col`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`relative flex w-full min-w-0 flex-col overflow-hidden rounded-xl sm:rounded-2xl bg-white shadow-2xl ${maxWidth} max-h-[calc(100dvh-1rem)] sm:max-h-[90vh]`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-100">
-          <h2 className="text-lg font-bold text-stone-900">{title}</h2>
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-stone-100 px-4 py-3 sm:px-6 sm:py-4">
+          <h2 className="min-w-0 break-words text-base font-bold text-stone-900 sm:text-lg">
+            {title}
+          </h2>
+
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-stone-100 transition-colors text-stone-500 hover:text-stone-900"
+            aria-label="Close"
+            className="shrink-0 rounded-lg p-1.5 text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+
+        <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-4 sm:px-6 sm:py-5">
+
+          {children}
+        </div>
       </div>
     </div>
   );

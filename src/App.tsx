@@ -1,8 +1,4 @@
 import { useState, useEffect } from 'react';
-import type { Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
-import Auth from '@/components/Auth';
-import Layout from '@/components/Layout';
 import Dashboard from '@/pages/Dashboard';
 import RawMaterials from '@/pages/RawMaterials';
 import Products from '@/pages/Products';
@@ -15,10 +11,14 @@ import Deliveries from '@/pages/Deliveries';
 import StockIn from '@/pages/StockIn';
 import Expenses from '@/pages/Expenses';
 import Reports from '@/pages/Reports';
-import type { NavId } from '@/lib/constants';
 import DatabaseExport from '@/pages/DatabaseExport';
 import UserManagement from '@/pages/UserManagement';
+import Auth from '@/components/Auth';
+import Layout from '@/components/Layout';
 import { PermissionProvider } from '@/context/PermissionContext';
+import { type NavId } from '@/lib/constants';
+import { supabase } from '@/lib/supabase';
+import type { Session } from '@supabase/supabase-js';
 
 type PermissionLevel = 'none' | 'enter' | 'view' | 'manage';
 
@@ -39,7 +39,7 @@ const PAGE_PERMISSION_MAP: Partial<Record<NavId, string>> = {
   payments: 'payments.create',
   deliveries: 'deliveries.view',
   expenses: 'expenses.create',
-  reports: 'reports.view',
+  reports: 'reports.sales',
   'user-management': 'users.view',
   'database-export': 'database_export.view',
 };
@@ -184,6 +184,7 @@ function App() {
         permissions={permissions}
         permissionLevels={permissionLevels}
       >
+
         {effectivePage === 'dashboard' && (
           <Dashboard onNavigate={handleNavigate} />
         )}
